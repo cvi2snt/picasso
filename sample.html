@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+    content="Deformable Neural Radiance Fields creates free-viewpoint portraits (nerfies) from casually captured videos.">
+  <meta name="keywords" content="Nerfies, D-NeRF, NeRF">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PICASSO: A Feed-Forward Framework for Parametric Inference of CAD Sketches via Rendering Self-Supervision</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script> -->
+  <!-- <script>
+     window.dataLayer = window.dataLayer || []; 
+  
+     function gtag() { 
+       dataLayer.push(arguments); 
+     }
+  
+     gtag('js', new Date());
+  
+     gtag('config', 'G-PYVRSFMDRL');
+   </script> -->
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.png">
+
+  <style>
+      .custom-font {
+          font-variant: small-caps;
+      }
+  </style>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  
+</head>
+
+<body>
+
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+    <div class="navbar-menu">
+      <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+        <a class="navbar-item" href="https://cvi2.uni.lu">
+          <span class="icon">
+            <i class="fas fa-home"></i>
+          </span>
+        </a>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">
+            Related Papers
+          </a>
+          <div class="navbar-dropdown">
+            
+              <a class="navbar-item" href="https://arxiv.org/pdf/2402.17678">
+                CAD-SIGNet: CAD Language Inference from Point Clouds using Layer-wise Sketch Instance Guided Attention
+              </a>
+            
+              <a class="navbar-item" href="https://arxiv.org/pdf/2208.10555">
+                CADOps-Net: Jointly Learning CAD Operation Types and Steps from Boundary-Representations
+              </a>
+            
+              <a class="navbar-item" href="https://arxiv.org/pdf/2407.12702">
+                TransCAD: A Hierarchical Transformer for CAD Sequence Inference from Point Clouds
+              </a>
+            
+              <a class="navbar-item" href="https://arxiv.org/pdf/2304.06531">
+                SepicNet: Sharp Edges Recovery by Parametric Inference of Curves in 3D
+              </a>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <section class="hero">
+    <div class="hero body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">PICASSO: A Feed-Forward Framework for Parametric Inference of CAD Sketches via Rendering Self-Supervision</h1>
+            <div class="is-size-5 publication-authors">
+              
+                <span class="author-block">
+                  <a href="https://www.uni.lu/en/person/NTAwNjIwOTNfX0FobWV0IFNlcmRhciBLQVJBREVOSVo=/">Ahmet Serdar Karadeniz</a><sup>1</sup>
+                </span>
+              
+                <span class="author-block">
+                  <a href="https://www.uni.lu/en/person/NTAwNjgzMTNfX0RpbWl0cmlvcyBNQUxMSVM=/">Dimitrios Mallis</a><sup>1</sup>
+                </span>
+              
+                <span class="author-block">
+                  <a href="https://www.uni.lu/en/person/NTAwMzcwNjlfX05lc3J5bmUgTUVKUkk=/">Nesryne Mejri</a><sup>1</sup>
+                </span>
+              
+                <span class="author-block">
+                  <a href="https://www.linkedin.com/in/kseniya-cherenkova-a3a65a54/">Kseniya Cherenkova</a><sup>1, 2</sup>
+                </span>
+              
+                <span class="author-block">
+                  <a href="https://www.uni.lu/en/person/NTAwMzU1NDVfX0FuaXMgS0FDRU0=/">Anis Kacem</a><sup>1</sup>
+                </span>
+              
+                <span class="author-block">
+                  <a href="https://www.uni.lu/en/person/NTAwMDA0MzdfX0RqYW1pbGEgQU9VQURB/">Djamila Aouada</a><sup>1</sup>
+                </span>
+              
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              
+                <span class="author-block"><sup>1</sup>SnT, University of Luxembourg</span>
+              
+                <span class="author-block"><sup>2</sup>Artec3D</span>
+              
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- PDF Link. -->
+                
+                  <span class="link-block">
+                    <a href="https://arxiv.org/pdf/2407.13394" class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon">
+                        <i class="ai ai-arxiv"></i>
+                      </span>
+                      <span>arXiv</span>
+                    </a>
+                  </span>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+    </div>
+  </section>
+
+  <section class="hero teaser">
+    <div class="container is-max-desktop">
+      <div class="hero-body">
+        
+            
+              <img src="./static/images/method.png" alt="Embedded image">
+            
+            <h2 class="subtitle has-text-centered">PICASSO is a framework that enables CAD sketch parameterization via rendering self-supervision. </h2>
+        
+        </h2>
+      </div>
+    </div>
+  </section> 
+
+
+  <!-- <section class="hero is-light is-small">
+    <div class="hero-body">
+      <div class="container">
+        <div id="results-carousel" class="carousel results-carousel">
+          <div class="item item-steve">
+            <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/steve.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item item-chair-tp">
+            <video poster="" id="chair-tp" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/chair-tp.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item item-shiba">
+            <video poster="" id="shiba" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/shiba.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item item-fullbody">
+            <video poster="" id="fullbody" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/fullbody.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item item-blueshirt">
+            <video poster="" id="blueshirt" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/blueshirt.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item item-mask">
+            <video poster="" id="mask" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/mask.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item item-coffee">
+            <video poster="" id="coffee" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/coffee.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="item item-toby">
+            <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/toby2.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+
+
+  
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Section. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <!-- <h2 class="title is-3">Introduction</h2> -->
+          
+            <h2 class="title is-3">Introduction</h2>
+          
+          <div class="block content has-text-justified">
+            
+              <p>In this work, we introduce a framework for Parametric Inference of CAD Sketches via Rendering Self-SupervisiOn, refereed to as PICASSO. PICASSO enables learning parametric CAD sketches directly from precise or hand-drawn images, even when parameter-level annotations are limited or unavailable. This is achieved by utilizing the geometric appearance of sketches as a learning signal to pretrain a CAD parameterization network.</p>
+              <div class="block center-media">
+                
+              </div>
+            
+              <p>PICASSO is composed of two main components: (1) a Sketch Parameterization Network <b>(SPN)</b> that predicts a set of parametric primitives from CAD sketch images and (2) a Sketch Rendering Network <b>(SRN)</b> to render parametric CAD sketches in a differentiable manner. SRN enables image-to-image loss computation that can be used to pretrain SPN, leading to zero- and few-shot learning scenarios for hand-drawn sketch parametrization. To the best of our knowledge, we are the first to address CAD sketch parameterization with limited or without parametric annotations. PICASSO can achieve strong parameterization performance with only a small number of annotated samples.</p>
+              <div class="block center-media">
+                
+              </div>
+            
+            
+          </div>
+          
+        </div>
+      </div>
+      <!--/ Section. -->
+
+      <!-- Paper video. -->
+      <!-- <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Video</h2>
+          <div class="publication-video">
+            <iframe src="https://www.youtube.com/embed/MrKrnHhk8IA?rel=0&amp;showinfo=0" frameborder="0"
+              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div> -->
+      <!--/ Paper video. -->
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Section. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <!-- <h2 class="title is-3">Method</h2> -->
+          
+            <h2 class="title is-3">Method</h2>
+          
+          <div class="block content has-text-justified">
+            
+              <p><b> SRN </b> is modeled by a transformer encoder-decoder that learns a mapping from parametric primitive tokens to the sketch image domain. Through neural differentiable rendering, SRN allows the computation of an image-to-image loss between predicted raster sketches and input precise or hand-drawn sketches.</p>
+              <div class="block center-media">
+                
+                  
+                    
+                      <img src="./static/images/srn_colored.png" alt="Embedded image">
+                    
+                  
+                
+              </div>
+            
+              <p><center> <b> Sketch Rendering Network (SRN). </b> </center></p>
+              <div class="block center-media">
+                
+              </div>
+            
+              <p><b> SPN </b> processes an input raster sketch image using a convolutional backbone to produce a feature map, which is then fed to a transformer encoder-decoder for sketch parameterization. SPN is pre-trained using rendering self-supervision provided by SRN, allowing zero-shot CAD sketch parameterization, and finetuned with parameter-level annotations for few-shot scenario.</p>
+              <div class="block center-media">
+                
+                  
+                    
+                      <img src="./static/images/spn.png" alt="Embedded image">
+                    
+                  
+                
+              </div>
+            
+              <p><center> <b> Sketch Parameterization Network (SPN). </b> </center></p>
+              <div class="block center-media">
+                
+              </div>
+            
+            
+          </div>
+          
+        </div>
+      </div>
+      <!--/ Section. -->
+
+      <!-- Paper video. -->
+      <!-- <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Video</h2>
+          <div class="publication-video">
+            <iframe src="https://www.youtube.com/embed/MrKrnHhk8IA?rel=0&amp;showinfo=0" frameborder="0"
+              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div> -->
+      <!--/ Paper video. -->
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Section. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <!-- <h2 class="title is-3">Effectiveness of PICASSO</h2> -->
+          
+            <h2 class="title is-3">Effectiveness of PICASSO</h2>
+          
+          <div class="block content has-text-justified">
+            
+              <p></p>
+              <div class="block center-media">
+                
+              </div>
+            
+            
+          </div>
+          
+            <div class="subsections block content has-text-justified">
+              
+                <h3 class="title is-4">Few-shot CAD Parameterization</h3>
+                <div class="block content has-text-justified">
+                  
+                  
+                    <p>For the few-shot setting, we first pre-train PICASSO with rendering self-supervision. The learned CAD sketch parameterization model is subsequently fine-tuned on smaller, curated sets of parameterized sketches. The pre-trained PICASSO (w/ pt.) is compared to its from scratch counterpart (w/o pt.). Overall, the pre-training outperforms learning from scratch across different sizes of finetuning datasets both with precise and hand-drawn images.</p>
+                    <div class="block center-media">
+                      
+                        
+                          
+                            <img src="./static/images/fewshot_graph.png" alt="Embedded image">
+                          
+                        
+                      
+                    </div>
+                  
+                    <p><center> <b> Effectiveness of rendering self-supervision on a fewshot evaluation. </b> </center></p>
+                    <div class="block center-media">
+                      
+                    </div>
+                  
+                    <p></p>
+                    <div class="block center-media">
+                      
+                        
+                          
+                            <img src="./static/images/fewshot.png" alt="Embedded image">
+                          
+                        
+                      
+                    </div>
+                  
+                    <p><center> <b> Qualitative few-shot results of PICASSO learned CAD sketch parameterization. </b> </center></p>
+                    <div class="block center-media">
+                      
+                    </div>
+                  
+                </div>
+              
+                <h3 class="title is-4">Zero-shot CAD Parameterization</h3>
+                <div class="block content has-text-justified">
+                  
+                  
+                    <p>By leveraging rendering self-supervision, PICASSO can estimate the parameters of sketches directly without requiring parametric supervision. We evaluate the performance of PICASSO on the challenging zero-shot CAD sketch parameterization scenario.</p>
+                    <div class="block center-media">
+                      
+                        
+                          
+                            <img src="./static/images/zeroshot.png" alt="Embedded image">
+                          
+                        
+                      
+                    </div>
+                  
+                </div>
+              
+                <h3 class="title is-4">Test-time Optimization</h3>
+                <div class="block content has-text-justified">
+                  
+                  
+                    <p>We compare the proposed SRN to the differentiable rendered DiffVG on a test-time optimization setting. In particular, rendering self-supervision by both SRN and DiffVG is used to enhance CAD parameterization produced by a parameterically supervised SPN at test-time. SRN surpasses DiffVG-based test-time optimization.</p>
+                    <div class="block center-media">
+                      
+                        
+                          
+                            <img src="./static/images/output-onlinepngtools.png" alt="Embedded image">
+                          
+                        
+                      
+                    </div>
+                  
+                </div>
+              
+            </div>
+          
+        </div>
+      </div>
+      <!--/ Section. -->
+
+      <!-- Paper video. -->
+      <!-- <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Video</h2>
+          <div class="publication-video">
+            <iframe src="https://www.youtube.com/embed/MrKrnHhk8IA?rel=0&amp;showinfo=0" frameborder="0"
+              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div> -->
+      <!--/ Paper video. -->
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Section. -->
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <!-- <h2 class="title is-3">Acknowledgements</h2> -->
+          
+            <h2 class="title is-3">Acknowledgements</h2>
+          
+          <div class="block content has-text-justified">
+            
+              <p>The present work is supported by the National Research Fund (FNR), Luxembourg under the BRIDGES2021/IS/16849599/FREE-3D project and Artec3D.</p>
+              <div class="block center-media">
+                
+                  
+                    
+                      <img src="./static/images/logos.png" alt="Embedded image">
+                    
+                  
+                
+              </div>
+            
+            
+          </div>
+          
+        </div>
+      </div>
+      <!--/ Section. -->
+
+      <!-- Paper video. -->
+      <!-- <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Video</h2>
+          <div class="publication-video">
+            <iframe src="https://www.youtube.com/embed/MrKrnHhk8IA?rel=0&amp;showinfo=0" frameborder="0"
+              allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div> -->
+      <!--/ Paper video. -->
+    </div>
+  </section>
+
+        
+
+  <section class="section">
+    <div class="container is-max-desktop">
+
+      <!-- <div class="columns is-centered"> -->
+
+        <!-- Visual Effects. -->
+        <!-- <div class="column">
+          <div class="content">
+            <h2 class="title is-3">Visual Effects</h2>
+            <p>
+              Using <i>nerfies</i> you can create fun visual effects. This Dolly zoom effect
+              would be impossible without nerfies since it would require going through a wall.
+            </p>
+            <video id="dollyzoom" autoplay controls muted loop playsinline height="100%">
+              <source src="./static/videos/dollyzoom-stacked.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div> -->
+        <!--/ Visual Effects. -->
+
+        <!-- Matting. -->
+        <!-- <div class="column">
+          <h2 class="title is-3">Matting</h2>
+          <div class="columns is-centered">
+            <div class="column content">
+              <p>
+                As a byproduct of our method, we can also solve the matting problem by ignoring
+                samples that fall outside of a bounding box during rendering.
+              </p>
+              <video id="matting-video" controls playsinline height="100%">
+                <source src="./static/videos/matting.mp4" type="video/mp4">
+              </video>
+            </div>
+
+          </div>
+        </div>
+      </div> -->
+      <!--/ Matting. -->
+
+      <!-- Animation. -->
+      <!-- <div class="columns is-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">Animation</h2> -->
+
+          <!-- Interpolating. -->
+          <!-- <h3 class="title is-4">Interpolating states</h3>
+          <div class="content has-text-justified">
+            <p>
+              We can also animate the scene by interpolating the deformation latent codes of two input
+              frames. Use the slider here to linearly interpolate between the left frame and the right
+              frame.
+            </p>
+          </div>
+          <div class="columns is-vcentered interpolation-panel">
+            <div class="column is-3 has-text-centered">
+              <img src="./static/images/interpolate_start.jpg" class="interpolation-image"
+                alt="Interpolate start reference image." />
+              <p>Start Frame</p>
+            </div>
+            <div class="column interpolation-video-column">
+              <div id="interpolation-image-wrapper">
+                Loading...
+              </div>
+              <input class="slider is-fullwidth is-large is-info" id="interpolation-slider" step="1" min="0" max="100"
+                value="0" type="range">
+            </div>
+            <div class="column is-3 has-text-centered">
+              <img src="./static/images/interpolate_end.jpg" class="interpolation-image"
+                alt="Interpolation end reference image." />
+              <p class="is-bold">End Frame</p>
+            </div>
+          </div>
+          <br /> -->
+          <!--/ Interpolating. -->
+
+          <!-- Re-rendering. -->
+          <!-- <h3 class="title is-4">Re-rendering the input video</h3>
+          <div class="content has-text-justified">
+            <p>
+              Using <span class="dnerf">Nerfies</span>, you can re-render a video from a novel
+              viewpoint such as a stabilized camera by playing back the training deformations.
+            </p>
+          </div>
+          <div class="content has-text-centered">
+            <video id="replay-video" controls muted preload playsinline width="75%">
+              <source src="./static/videos/replay.mp4" type="video/mp4">
+            </video>
+          </div> -->
+          <!--/ Re-rendering. -->
+
+        <!-- </div>
+      </div> -->
+      <!--/ Animation. -->
+
+
+      <!-- Concurrent Work. -->
+      <!-- <div class="columns is-centered">
+        <div class="column is-full-width">
+          <h2 class="title is-3">Related Works</h2>
+
+          <div class="content has-text-justified">
+            
+            <p>
+              
+                <a href="https://www.relatedwork1.com">Related Work 1</a>
+              
+                <a href="https://www.relatedwork2.com">Related Work 2</a>
+              
+              This is a body text about the first related work.
+            </p>
+            
+            <p>
+              
+                <a href="https://www.relatedwork3.com">Related Work 3</a>
+              
+                <a href="https://www.relatedwork4.com">Related Work 4</a>
+              
+              This is a body text about the second related work.
+            </p>
+            
+          </div>
+        </div>
+      </div> -->
+      <!--/ Concurrent Work. -->
+
+    </div>
+  </section>
+
+
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@misc{karadeniz2024picasso,
+                title={PICASSO: A Feed-Forward Framework for Parametric Inference of CAD Sketches via Rendering Self-Supervision}, 
+                author={Ahmet Serdar Karadeniz and Dimitrios Mallis and Nesryne Mejri and Kseniya Cherenkova and Anis Kacem and Djamila Aouada},
+                year={2024},
+                eprint={2407.13394},
+                archivePrefix={arXiv},
+                primaryClass={cs.CV},
+                url={https://arxiv.org/abs/2407.13394}
+            }</code></pre>
+    </div>
+  </section>
+
+
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered">
+        
+          <a class="icon-link" href="https://www.footerlink1.com">
+            <i class="fab fa-twitter"></i>
+          </a>
+        
+          <a class="icon-link" href="https://www.footerlink2.com">
+            <i class="fab fa-linkedin"></i>
+          </a>
+        
+          <a class="icon-link" href="https://www.footerlink3.com">
+            <i class="fab fa-facebook"></i>
+          </a>
+        
+      </div>
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This website is licensed under a <a rel="license"
+                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+                Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+            <p>
+              This page is created using the source code of the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> website. Leave the link to the original source code should you decide to reuse it.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const keyword = "PICASSO";
+            const elements = document.body.querySelectorAll("*:not(script):not(style):not(meta)");
+
+            elements.forEach(element => {
+                if (element.children.length === 0) { // Only process elements without child elements
+                    element.innerHTML = element.innerHTML.replace(new RegExp(keyword, 'g'), `<span class="custom-font">${keyword}</span>`);
+                }
+            });
+        });
+    </script>
+
+
+</body>
+
+</html>
