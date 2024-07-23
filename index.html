@@ -240,7 +240,7 @@
                 
               </div>
             
-              <p>PICASSO is composed of two main components: (1) a Sketch Parameterization Network <b>(SPN)</b> that predicts a set of parametric primitives from CAD sketch images and (2) a Sketch Rendering Network <b>(SRN)</b> to render parametric CAD sketches in a differentiable manner. SRN enables image-to-image loss computation that can be used to pretrain SPN, leading to zero- and few-shot learning scenarios for hand-drawn sketch parametrization. To the best of our knowledge, we are the first to address CAD sketch parameterization with limited or without parametric annotations. PICASSO can achieve strong parameterization performance with only a small number of annotated samples.</p>
+              <p>PICASSO is composed of two main components: <b> (1) a Sketch Parameterization Network (SPN)</b> that predicts a set of parametric primitives from CAD sketch images and <b> (2) a Sketch Rendering Network (SRN)</b> to render parametric CAD sketches in a differentiable manner. SRN enables image-to-image loss computation that can be used to pretrain SPN, leading to zero- and few-shot learning scenarios for hand-drawn sketch parametrization. To the best of our knowledge, we are the first to address CAD sketch parameterization with limited or without parametric annotations. PICASSO can achieve strong parameterization performance with only a small number of annotated samples.</p>
               <div class="block center-media">
                 
               </div>
@@ -277,7 +277,7 @@
           
           <div class="block content has-text-justified">
             
-              <p><b> SRN </b> is modeled by a transformer encoder-decoder that learns a mapping from parametric primitive tokens to the sketch image domain. Through neural differentiable rendering, SRN allows the computation of an image-to-image loss between predicted raster sketches and input precise or hand-drawn sketches.</p>
+              <p><b> SRN </b> is modeled by a transformer encoder-decoder that learns a mapping from parametric primitive tokens to the sketch image domain. Through neural differentiable rendering, SRN allows the computation of an image-to-image loss between predicted raster sketches and input precise or hand-drawn sketches. The proposed SRN can be trained on synthetically generated sketches.</p>
               <div class="block center-media">
                 
                   
@@ -355,7 +355,7 @@
                 <div class="block content has-text-justified">
                   
                   
-                    <p>For the few-shot setting, we first pre-train PICASSO with rendering self-supervision on synthetically generated sketches. Pre-trained model is subsequently finetuned on smaller, curated sets of real sketches from <a href='https://github.com/PrincetonLIPS/SketchGraphs'>SketchGraphs</a> dataset. The pre-trained PICASSO (w/ pt.) is compared to its from scratch counterpart (w/o pt.). Overall, the pre-training outperforms learning from scratch across different sizes of finetuning datasets both with precise and hand-drawn images.</p>
+                    <p>For the few-shot setting, we first pre-train PICASSO with rendering self-supervision on a large corpus CAD sketch images without parametric annotations. Pre-trained model is subsequently finetuned on smaller sets of sketches from <a href='https://github.com/PrincetonLIPS/SketchGraphs'>SketchGraphs</a> dataset. The pre-trained PICASSO (w/ pt.) is compared to its from scratch counterpart (w/o pt.). Overall, the pre-training outperforms learning from scratch across different sizes of finetuning datasets both with precise and hand-drawn images.</p>
                     <div class="block center-media">
                       
                         
